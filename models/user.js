@@ -38,6 +38,6 @@ var userSchema = new Schema({
     }
 });
 
-userSchema.plugin(uniqueValidator, { message: '{PATH} debe de ser único' });
+userSchema.plugin(uniqueValidator, { message: 'El {PATH} ya está registrado' });
 
 module.exports = mongoose.model('User', userSchema);

@@ -6,17 +6,15 @@ var bodyParser = require('body-parser');
 // Inicializar variables
 var app = express();
 
-// Importar rutas
-var appRoutes = require('./routes/app');
-var userRoutes = require('./routes/user');
-var loginRoutes = require('./routes/login');
-var hospitalRoutes = require('./routes/hospital');
-var doctorRoutes = require('./routes/doctor');
-var searchRoutes = require('./routes/search');
-var uploadRoutes = require('./routes/upload');
-var imageRoutes = require('./routes/image');
+// CORS
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
+    next();
+});
 
-// Bdoy-parser
+// Body-parser
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -26,6 +24,16 @@ mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', (err, res) =
     if (err) throw err;
     console.log('Base de datos: \x1b[32m%s\x1b[0m', 'online');
 });
+
+// Importar rutas
+var appRoutes = require('./routes/app');
+var userRoutes = require('./routes/user');
+var loginRoutes = require('./routes/login');
+var hospitalRoutes = require('./routes/hospital');
+var doctorRoutes = require('./routes/doctor');
+var searchRoutes = require('./routes/search');
+var uploadRoutes = require('./routes/upload');
+var imageRoutes = require('./routes/image');
 
 // Rutas
 app.use('/user', userRoutes);

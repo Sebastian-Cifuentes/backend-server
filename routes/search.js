@@ -7,6 +7,9 @@ var User = require('../models/user');
 
 // Busqueda por colección
 app.get('/collection/:collection/:search', (req, res) => {
+    var since = req.query.since || 0;
+    since = Number(since);
+
     var search = req.params.search;
     var collection = req.params.collection;
     var regex = new RegExp(search, 'i');
@@ -15,13 +18,13 @@ app.get('/collection/:collection/:search', (req, res) => {
 
     switch (collection) {
         case 'users':
-            promise = searchUsers(search, regex);
+            promise = searchUsers(since, search, regex);
             break;
         case 'hospitals':
-            promise = searchHospitals(search, regex);
+            promise = searchHospitals(since, search, regex);
             break;
         case 'doctors':
-            promise = searchDoctors(search, regex);
+            promise = searchDoctors(since, search, regex);
             break;
         default:
             return res.status(400).json({
@@ -32,9 +35,11 @@ app.get('/collection/:collection/:search', (req, res) => {
     }
 
     promise.then(data => {
+
         res.status(200).json({
             ok: true,
-            [collection]: data
+            [collection]: data.resp1,
+            totalRegisters: data.resp2
         });
     });
 
@@ -42,65 +47,86 @@ app.get('/collection/:collection/:search', (req, res) => {
 
 // Busqueda en todas las colecciones
 app.get('/all/:search', (req, res, next) => {
+    var since = req.query.since || 0;
+    since = Number(since);
 
     var search = req.params.search;
     var regex = new RegExp(search, 'i');
 
     Promise.all([
-            searchUsers(search, regex),
-            searchHospitals(search, regex),
-            searchDoctors(search, regex)
-
+            searchUsers(since, search, regex, ),
+            searchHospitals(since, search, regex),
+            searchDoctors(since, search, regex)
         ])
         .then(resp => {
             res.status(200).json({
                 ok: true,
-                users: resp[2],
-                hospitals: resp[0],
-                doctors: resp[1],
+                users: resp[0].resp1,
+                hospitals: resp[1].resp1,
+                doctors: resp[2].resp1
             });
         });
 });
 
-
-function searchUsers(search, regex) {
+function searchUsers(since, search, regex) {
     return new Promise((resolve, reject) => {
-        User.find({}, 'name email img role')
+        const resp = { resp1: {}, resp2: 0 }
+        User.find({}, 'name email img role google')
+            .skip(since)
+            .limit(5)
             .or([{ 'name': regex }, { 'email': regex }])
             .exec((err, users) => {
                 if (err) {
                     reject('Error al buscar usuarios', err);
                 }
-                resolve(users);
+                resp.resp1 = users;
+                User.count({}, (err, count) => {
+                    resp.resp2 = count;
+                    resolve(resp);
+                })
             });
     });
 }
 
 
-function searchHospitals(search, regex) {
+function searchHospitals(since, search, regex) {
+    const resp = { resp1: {}, resp2: 0 }
     return new Promise((resolve, reject) => {
         Hospital.find({ name: regex })
+            .skip(since)
+            .limit(5)
             .populate('user', 'name email role')
             .exec(
                 (err, hospitals) => {
                     if (err) {
                         reject('Error al buscar hospitales', err);
                     }
-                    resolve(hospitals);
+                    resp.resp1 = hospitals;
+                    Hospital.count({}, (err, count) => {
+                        resp.resp2 = count;
+                        resolve(resp);
+                    });
                 });
     });
 }
 
-function searchDoctors(search, regex) {
+function searchDoctors(since, search, regex) {
+    const resp = { resp1: {}, resp2: 0 }
     return new Promise((resolve, reject) => {
         Doctor.find({ name: regex })
+            .skip(since)
+            .limit(5)
             .populate('user', 'name email role')
             .populate('hospital')
             .exec((err, doctors) => {
                 if (err) {
                     reject('Error al buscar doctores', err);
                 }
-                resolve(doctors);
+                resp.resp1 = doctors;
+                Doctor.count({}, (err, count) => {
+                    resp.resp2 = count;
+                    resolve(resp);
+                });
             });
     });
 }

@@ -3,16 +3,16 @@ var app = express();
 var bcrypt = require('bcryptjs');
 var mdVerifyToken = require('../middlewares/autentication');
 
+
 var User = require('../models/user');
 
 // Obtener usuarios
-
 app.get('/', (req, res, next) => {
 
     var since = req.query.since || 0;
     since = Number(since);
 
-    User.find({}, 'name email img role')
+    User.find({}, 'name email img role google')
         .skip(since)
         .limit(5)
         .exec(
@@ -45,8 +45,7 @@ app.get('/', (req, res, next) => {
 });
 
 // Actualizar usuario
-
-app.put('/:id', mdVerifyToken.verifyToken, (req, res) => {
+app.put('/:id', [mdVerifyToken.verifyToken, mdVerifyToken.verifyAdmin_o_mismousuario], (req, res) => {
 
     var id = req.params.id;
     var body = req.body;
@@ -93,15 +92,14 @@ app.put('/:id', mdVerifyToken.verifyToken, (req, res) => {
 });
 
 // Crear usuarios
-
-app.post('/', mdVerifyToken.verifyToken, (req, res) => {
+app.post('/', (req, res) => {
 
     var body = req.body;
 
     var user = new User({
         name: body.name,
         email: body.email,
-        password: bcrypt.hashSync(body.password, 10),
+        password: body.password,
         img: body.img,
         role: body.role
     });
@@ -110,7 +108,7 @@ app.post('/', mdVerifyToken.verifyToken, (req, res) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Error creando un usario',
+                mensaje: 'Error creando un usuario',
                 errors: err
             });
         }
@@ -126,15 +124,14 @@ app.post('/', mdVerifyToken.verifyToken, (req, res) => {
 });
 
 // Borrar un usuario por el id
-
-app.delete('/:id', mdVerifyToken.verifyToken, (req, res) => {
+app.delete('/:id', [mdVerifyToken.verifyToken, mdVerifyToken.verifyAdmin], (req, res) => {
     var id = req.params.id;
 
     User.findByIdAndRemove(id, (err, userDelete) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
-                mensaje: 'Error borrando usario',
+                mensaje: 'Error borrando usuario',
                 errors: err
             });
         }

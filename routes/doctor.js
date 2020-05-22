@@ -44,6 +44,36 @@ app.get('/', (req, res) => {
         });
 });
 
+// Obtener doctor por id
+app.get('/:id', (req, res) => {
+    var id = req.params.id;
+    Doctor.findById(id)
+        .populate('user', 'name email img')
+        .populate('hospital')
+        .exec((err, doctor) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error al buscar el doctor',
+                    errors: err
+                });
+            }
+
+            if (!doctor) {
+                return res.status(400).json({
+                    ok: false,
+                    mensake: 'El doctor con el id ' + id + ' no existe',
+                    errors: { error: err, message: 'No existe el doctor' }
+                });
+            }
+
+            res.status(200).json({
+                ok: true,
+                doctor: doctor
+            })
+        });
+});
+
 // Actualizar doctor
 
 app.put('/:id', mdVerifyToken.verifyToken, (req, res) => {
