@@ -2,10 +2,23 @@ var express = require('express');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var SEED = require('../config/config').SEED;
+var mdVerifyToken = require('../middlewares/autentication');
 
 var app = express();
 
 var User = require('../models/user');
+
+// Renovar token
+app.get('/renewtoken', mdVerifyToken.verifyToken, (req, res) => {
+
+    var token = jwt.sign({ user: req.user }, SEED, { expiresIn: 14400 }); // Valido por 4 horas
+
+    res.status(200).json({
+        ok: true,
+        user: req.user,
+        token: token
+    });
+});
 
 // Autenticación de google
 async function verify(token) {
