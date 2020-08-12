@@ -1,32 +1,32 @@
 {
-  "name": "backend-server",
-  "version": "1.0.0",
-  "description": "Servidor backend del curso de angular avanzado",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
-  },
-  "author": "Sebastian Cifuentes",
-  "license": "ISC",
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-fileupload": "^1.1.7-alpha.3",
-    "google-auth-library": "^6.0.0",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.7.5",
-    "mongoose-unique-validator": "^2.0.3"
-  },
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Sebastian-Cifuentes/backend-server.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Sebastian-Cifuentes/backend-server/issues"
-  },
-  "homepage": "https://github.com/Sebastian-Cifuentes/backend-server#readme"
+    "name": "backend-server",
+    "version": "1.0.0",
+    "description": "Servidor backend del curso de angular avanzado",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js"
+    },
+    "author": "Sebastian Cifuentes",
+    "license": "ISC",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.0",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-fileupload": "^1.1.7-alpha.3",
+        "google-auth-library": "^6.0.0",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^5.7.5",
+        "mongoose-unique-validator": "^2.0.3"
+    },
+    "devDependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Sebastian-Cifuentes/backend-server.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Sebastian-Cifuentes/backend-server/issues"
+    },
+    "homepage": "https://github.com/Sebastian-Cifuentes/backend-server#readme"
 }
