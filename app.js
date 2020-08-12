@@ -2,6 +2,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+require('dotenv').config()
 
 // Inicializar variables
 var app = express();
@@ -20,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Conexión a la base de datos
-mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', (err, res) => {
+mongoose.connection.openUri(process.env.MONGODB_URI || 'mongodb://localhost:27017/hospitalDB', (err, res) => {
     if (err) throw err;
     console.log('Base de datos: \x1b[32m%s\x1b[0m', 'online');
 });
@@ -47,6 +48,9 @@ app.use('/image', imageRoutes);
 app.use('/', appRoutes);
 
 // Escuchar peticiones
-app.listen(3000, () => {
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
     console.log('Express server puerto 3000: \x1b[34m%s\x1b[0m', 'online');
 });
