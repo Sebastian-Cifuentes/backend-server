@@ -143,7 +143,10 @@ app.post('/', (req, res) => {
             return res.status(400).json({
                 ok: false,
                 mensaje: 'Credenciales incorrectas - password',
-                errors: err
+                errors: err,
+                password: userDB.password,
+                passwordb: body.password,
+                val: bcrypt.compareSync(body.password, userDB.password)
             });
         }
 
